@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Pushref · Commercial ESN face à l'IA — Note fondatrice</title>
+<style>
+  /* =========================================================================
+     CHARTE DOMAINE `dev`
+     Primaire : vert terminal #00D26A
+     Accent   : bronze Pushref #C67A2C
+     Fond     : noir profond pour wordmark, blanc cassé pour la lecture
+     ========================================================================= */
+  :root {
+    --primary: #34495E;
+    --primary-dim: #22313F;
+    --accent: #D87F2C;
+    --accent-soft: #F2C896;
+    --ink: #14181A;
+    --ink-soft: #4A5258;
+    --rule: #D9DDE0;
+    --paper: #FAFAF7;
+    --paper-2: #ECEEF0;
+    --hero-bg: #0E141B;
+    --hero-fg: #E8EDEE;       /* clair */
+    --code-bg: #0E1518;
+    --code-fg: #B5E5C8;
+    --serif: Georgia, "Times New Roman", serif;
+    --sans:  -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --mono:  "JetBrains Mono", "Consolas", "Menlo", "Courier New", monospace;
+  }
+
+  /* Format A4. Marges nulles : chaque section gère ses marges internes */
+  @page {
+    size: A4 portrait;
+    margin: 0;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 10.5pt;
+    line-height: 1.5;
+    font-feature-settings: "kern" 1, "liga" 1;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* En écran on simule une page A4 lisible centrée */
+  @media screen {
+    body {
+      max-width: 210mm;
+      margin: 24px auto;
+      box-shadow: 0 1px 2px rgba(0,0,0,.06), 0 12px 36px rgba(0,0,0,.08);
+      border-radius: 4px;
+    }
+  }
+
+  /* =====================================================================
+     ÉLÉMENTS DE BASE
+     ===================================================================== */
+
+  p { margin: 0 0 0.55em 0; text-align: justify; hyphens: auto; }
+
+  strong { color: var(--ink); }
+
+  em { color: var(--ink-soft); }
+
+  ul { margin: 0.3em 0 0.7em 0; padding-left: 1.2em; }
+  ul li { margin: 0.15em 0; }
+  ul li::marker { color: var(--accent); }
+
+  a { color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--accent-soft); }
+
+  code, .mono {
+    font-family: var(--mono);
+    font-size: 0.92em;
+  }
+
+  /* =====================================================================
+     LABELS MONO « [ FOO ] »
+     ===================================================================== */
+  .tag {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 8.5pt;
+    letter-spacing: 0.18em;
+    color: var(--primary);
+    text-transform: uppercase;
+    margin-bottom: 6pt;
+  }
+  .tag::before { content: "■  "; color: var(--accent); }
+
+  /* =====================================================================
+     TITRES
+     ===================================================================== */
+  h1, h2, h3 { font-family: var(--serif); color: var(--ink); margin: 0; }
+
+  h1 {
+    font-size: 30pt;
+    line-height: 1.1;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin: 0 0 8pt 0;
+  }
+
+  h2 {
+    font-size: 16pt;
+    line-height: 1.2;
+    font-weight: 700;
+    margin: 10pt 0 5pt 0;
+    padding-bottom: 3pt;
+    border-bottom: 1.5pt solid var(--accent);
+  }
+
+  h3 {
+    font-size: 11pt;
+    line-height: 1.3;
+    font-weight: 700;
+    margin: 8pt 0 3pt 0;
+    color: var(--accent);
+    font-family: var(--sans);
+    letter-spacing: 0.01em;
+  }
+
+  /* =====================================================================
+     PAGE DE GARDE (full-bleed noir)
+     ===================================================================== */
+  .cover {
+    background: var(--hero-bg);
+    color: var(--hero-fg);
+    padding: 32mm 22mm 24mm 22mm;
+    page-break-after: always;
+    height: 297mm;
+    width: 210mm;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+  .cover .tag { color: var(--primary); }
+  .cover .cover-eyebrow {
+    font-family: var(--mono);
+    color: var(--primary);
+    font-size: 10pt;
+    letter-spacing: 0.2em;
+    margin-bottom: 32pt;
+  }
+  .cover h1 {
+    color: var(--hero-fg);
+    font-size: 60pt;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    margin-bottom: 18pt;
+  }
+  .cover .cover-tagline {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 22pt;
+    color: var(--accent-soft);
+    margin: 0 0 6pt 0;
+  }
+  .cover .cover-rule {
+    width: 70pt;
+    height: 2pt;
+    background: var(--accent);
+    margin: 14pt 0 14pt 0;
+  }
+  .cover .cover-domain {
+    font-family: var(--sans);
+    color: var(--hero-fg);
+    font-size: 14pt;
+    margin-top: 6pt;
+  }
+  .cover .cover-domain .dot {
+    color: var(--primary);
+    font-weight: bold;
+    margin: 0 6pt;
+  }
+  .cover .cover-bottom {
+    margin-top: auto;
+    border-top: 1pt solid #2a3236;
+    padding-top: 14pt;
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--mono);
+    color: #8d9598;
+    font-size: 9pt;
+    letter-spacing: 0.12em;
+  }
+  .cover .cover-bottom strong { color: var(--hero-fg); }
+
+  /* =====================================================================
+     PAGES INTERIEURES (avec marges internes)
+     ===================================================================== */
+  .page {
+    page-break-before: always;
+    padding: 14mm 18mm 16mm 18mm;
+  }
+  .page:first-of-type { page-break-before: auto; }
+
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-bottom: 1pt solid var(--rule);
+    padding-bottom: 3pt;
+    margin-bottom: 8pt;
+    font-family: var(--mono);
+    font-size: 8pt;
+    letter-spacing: 0.16em;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+  }
+  .page-header .left { color: var(--primary-dim); }
+  .page-header .right { color: var(--ink-soft); }
+
+  /* =====================================================================
+     PULL-QUOTES & ENCARTS
+     ===================================================================== */
+  .pull {
+    border-left: 3pt solid var(--accent);
+    padding: 2pt 0 2pt 12pt;
+    margin: 8pt 4pt 8pt 0;
+    font-family: var(--serif);
+    font-style: italic;
+    color: var(--ink-soft);
+    font-size: 11pt;
+    line-height: 1.45;
+  }
+
+  .callout {
+    background: var(--paper-2);
+    border-left: 3pt solid var(--primary);
+    padding: 8pt 12pt;
+    margin: 8pt 0;
+    border-radius: 0 4pt 4pt 0;
+    font-size: 9.8pt;
+    line-height: 1.45;
+  }
+  .callout .callout-title {
+    font-family: var(--mono);
+    font-size: 8.5pt;
+    letter-spacing: 0.18em;
+    color: var(--primary-dim);
+    text-transform: uppercase;
+    margin-bottom: 3pt;
+  }
+
+  /* =====================================================================
+     LISTES SPÉCIALES
+     ===================================================================== */
+  ul.is-not, ul.is {
+    list-style: none;
+    padding-left: 0;
+  }
+  ul.is-not li, ul.is li {
+    position: relative;
+    padding-left: 22pt;
+    margin: 4pt 0;
+  }
+  ul.is-not li::before {
+    content: "✗";
+    position: absolute;
+    left: 0;
+    color: #b34a4a;
+    font-weight: 700;
+    font-family: var(--mono);
+  }
+  ul.is li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: var(--primary-dim);
+    font-weight: 700;
+    font-family: var(--mono);
+  }
+
+  /* =====================================================================
+     TIMELINE
+     ===================================================================== */
+  .timeline {
+    margin: 8pt 0;
+    padding: 0;
+    list-style: none;
+    border-left: 2pt solid var(--accent);
+    padding-left: 14pt;
+  }
+  .timeline li {
+    position: relative;
+    margin: 0 0 8pt 0;
+    padding: 0;
+  }
+  .timeline li::before {
+    content: "";
+    position: absolute;
+    left: -19pt;
+    top: 5pt;
+    width: 7pt;
+    height: 7pt;
+    border-radius: 50%;
+    background: var(--primary);
+    box-shadow: 0 0 0 2pt var(--paper);
+  }
+  .timeline .date {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 8.5pt;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    font-weight: 700;
+    margin-right: 6pt;
+    text-transform: uppercase;
+  }
+  .timeline .title {
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .timeline .desc {
+    display: block;
+    font-size: 9.5pt;
+    color: var(--ink-soft);
+    margin-top: 2pt;
+    line-height: 1.4;
+  }
+
+  /* =====================================================================
+     ZOOM SONDES — cartes
+     ===================================================================== */
+  .probes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10pt;
+    margin: 8pt 0;
+  }
+  .probe {
+    border: 1pt solid var(--rule);
+    border-left: 3pt solid var(--primary);
+    padding: 8pt 10pt;
+    background: var(--paper);
+    border-radius: 0 4pt 4pt 0;
+    font-size: 10pt;
+    line-height: 1.4;
+    page-break-inside: avoid;
+  }
+  .probe .probe-name {
+    font-family: var(--mono);
+    color: var(--primary-dim);
+    font-size: 10pt;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    margin-bottom: 3pt;
+  }
+  .probe .probe-why {
+    color: var(--ink-soft);
+    font-size: 9.5pt;
+  }
+
+  /* =====================================================================
+     WORKFLOW SVG (parcours Pushref)
+     ===================================================================== */
+  .workflow-wrap {
+    margin: 8pt -2pt 12pt -2pt;
+    page-break-inside: avoid;
+  }
+  .workflow-wrap svg { width: 100%; height: auto; display: block; }
+  .workflow-caption {
+    font-family: var(--mono);
+    font-size: 8.5pt;
+    letter-spacing: 0.14em;
+    color: var(--ink-soft);
+    text-align: center;
+    text-transform: uppercase;
+    margin-top: 4pt;
+  }
+
+  /* =====================================================================
+     CONCLUSION (full-bleed noir, comme la couverture)
+     ===================================================================== */
+  .ending {
+    background: var(--hero-bg);
+    color: var(--hero-fg);
+    padding: 24mm 22mm;
+    height: 297mm;
+    width: 210mm;
+    page-break-before: always;
+    display: flex;
+    flex-direction: column;
+  }
+  .ending .tag { color: var(--primary); }
+  .ending h2 {
+    color: var(--hero-fg);
+    border-bottom: 1.5pt solid var(--primary);
+    font-size: 28pt;
+    margin: 8pt 0 16pt 0;
+    padding-bottom: 8pt;
+  }
+  .ending p {
+    color: #C8CFD0;
+    font-size: 12pt;
+    line-height: 1.6;
+    margin-bottom: 0.9em;
+  }
+  .ending p strong { color: var(--hero-fg); }
+  .ending .signature {
+    font-family: var(--serif);
+    font-style: italic;
+    color: var(--accent-soft);
+    text-align: right;
+    margin-top: 16pt;
+    font-size: 13pt;
+  }
+  .ending .ending-rule {
+    width: 70pt;
+    height: 2pt;
+    background: var(--accent);
+    margin: 24pt 0 14pt 0;
+  }
+
+  /* =====================================================================
+     CARTE PERSONA (présentation de l'utilisateur cible)
+     ===================================================================== */
+  .persona {
+    display: flex;
+    gap: 14pt;
+    align-items: stretch;
+    margin: 6pt 0 12pt 0;
+    background: var(--paper-2);
+    border-left: 3pt solid var(--accent);
+    padding: 10pt 14pt;
+    border-radius: 0 4pt 4pt 0;
+    page-break-inside: avoid;
+  }
+  .persona .persona-avatar {
+    flex: 0 0 60pt;
+    height: 60pt;
+    border-radius: 50%;
+    background: var(--hero-bg);
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--serif);
+    font-size: 26pt;
+    font-weight: 700;
+    border: 2pt solid var(--primary);
+  }
+  .persona .persona-body { flex: 1; }
+  .persona .persona-name {
+    font-family: var(--serif);
+    font-size: 13pt;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 2pt;
+  }
+  .persona .persona-name .meta {
+    font-family: var(--mono);
+    font-size: 8.5pt;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    font-weight: 400;
+    margin-left: 6pt;
+    text-transform: uppercase;
+  }
+  .persona .persona-desc {
+    font-size: 10pt;
+    color: var(--ink-soft);
+    line-height: 1.45;
+    margin: 0;
+    text-align: left;
+  }
+  .persona .persona-desc strong { color: var(--ink); }
+
+  /* =====================================================================
+     PETITS UTILS
+     ===================================================================== */
+  .lead {
+    font-size: 12pt;
+    color: var(--ink);
+    line-height: 1.55;
+  }
+  .small { font-size: 9.5pt; color: var(--ink-soft); }
+  .center { text-align: center; }
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     PAGE 1 — COUVERTURE
+     ============================================================ -->
+<section class="cover">
+  <div class="cover-eyebrow">[  PUSHREF  ·  AIPUSHTECH  ·  NOTE FONDATRICE  ]</div>
+
+  <h1>Commercial<br>ESN.</h1>
+
+  <div class="cover-tagline">Comprendre les besoins IA. Tenir la promesse.</div>
+  <div class="cover-rule"></div>
+  <div class="cover-domain">
+    <span class="mono">domaine</span>
+    <span class="dot">·</span>
+    <strong>commercial-esn</strong>
+    <span class="dot">·</span>
+    <span class="mono">v1.0</span>
+  </div>
+
+  <div class="cover-bottom">
+    <div><strong>PUSHREF</strong> &nbsp;·&nbsp; pionnier de l'AIPushTech</div>
+    <div>29 AVRIL 2026 &nbsp;·&nbsp; <strong>FR</strong></div>
+  </div>
+</section>
+
+<!-- ============================================================
+     PAGE 2 — AIPUSHTECH (générique) + PUSHREF (générique)
+     ============================================================ -->
+<section class="page">
+  <div class="page-header">
+    <span class="left">[ 01 · LA CATÉGORIE ]</span>
+    <span class="right">PUSHREF · DOMAINE COMMERCIAL-ESN</span>
+  </div>
+
+  <h2>AIPushTech, ce que c'est</h2>
+
+  <p class="lead">L'AIPushTech est une catégorie nouvelle, à l'intersection de trois mondes que personne n'avait encore reliés sérieusement : l'intelligence artificielle, la veille technologique, et l'apprentissage continu.</p>
+
+  <p>L'idée tient en une phrase : <strong>l'IA vient à toi, plutôt que l'inverse</strong>. Plutôt que de courir après chaque thread Twitter, chaque newsletter, chaque release de modèle — l'AIPushTech installe un système qui filtre, contextualise, et te confronte à ce qui compte vraiment dans ton domaine. C'est de la veille active sur l'IA appliquée à un métier, doublée d'une logique d'augmentation de compétence : tu ne consommes pas, tu progresses.</p>
+
+  <h3>Ce que l'AIPushTech n'est pas</h3>
+  <ul class="is-not">
+    <li>Pas une plateforme d'<em>e-learning</em> avec des modules linéaires et des certifications à afficher sur un CV.</li>
+    <li>Pas un MOOC à consommer une fois pour cocher une case.</li>
+    <li>Pas une école, pas un cours, pas un syllabus figé.</li>
+  </ul>
+
+  <h3>Ce que l'AIPushTech est</h3>
+  <ul class="is">
+    <li>Une veille structurée par <strong>domaine métier</strong> — l'IA telle qu'elle change ton travail à toi, pas l'IA en général.</li>
+    <li>Un fil d'apprentissage qui suit la sortie réelle des outils, des papiers, des releases.</li>
+    <li>Une discipline intellectuelle : comprendre, pratiquer, retenir.</li>
+  </ul>
+
+  <h2>Pushref, le produit</h2>
+
+  <h3>Ce que Pushref n'est pas</h3>
+  <ul class="is-not">
+    <li>Pas un agrégateur RSS qui te déverse mille flux à trier toi-même.</li>
+    <li>Pas un cours en ligne ennuyeux qui t'apprend l'IA en six chapitres et un quiz final.</li>
+    <li>Pas un moteur de recherche où tu dois trouver tes mots-clés à la main, espérer tomber sur la bonne page, et recommencer la semaine suivante.</li>
+  </ul>
+
+  <h3>Ce que Pushref est</h3>
+  <ul class="is">
+    <li>Une <strong>veille active et passive</strong> sur l'application de l'IA à ton domaine. Active quand tu cherches ; passive quand tu lis simplement le flux du jour.</li>
+    <li>Une <strong>politique éditoriale</strong> propre à chaque domaine — sa devise, son ton, ses critères d'inclusion et d'exclusion.</li>
+    <li>Un système de <strong>sondes</strong> — inclusives, exclusives, boost, strict_exclude — qui scorent chaque article et décident s'il entre dans ton flux ou non.</li>
+    <li>Une sélection rigoureuse de <strong>sources</strong>, pondérées selon leur fiabilité et leur intérêt pour le domaine.</li>
+  </ul>
+
+  <p>L'ambition est claire : t'aider à <strong>progresser</strong> sur ton métier au rythme de l'IA, sans avoir à devenir documentaliste à temps plein. Tu lis ce qui compte. Tu pratiques en sandbox. Tu retiens via QCM et répétition espacée. Tu partages avec tes pairs.</p>
+</section>
+
+<!-- ============================================================
+     PAGE 3 — L'IA A CHANGÉ LE DEV (timeline + impacts)
+     ============================================================ -->
+<section class="page">
+  <div class="page-header">
+    <span class="left">[ 02 · L'IA × COMMERCIAL-ESN ]</span>
+    <span class="right">PUSHREF · DOMAINE COMMERCIAL-ESN</span>
+  </div>
+
+  <h2>Comment l'IA a déplacé le métier de commercial ESN</h2>
+
+  <div class="persona">
+    <div class="persona-avatar">M</div>
+    <div class="persona-body">
+      <div class="persona-name">Mehdi <span class="meta">PERSONA · DOMAINE COMMERCIAL-ESN</span></div>
+      <p class="persona-desc"><strong>38 ans, commercial dans une ESN française</strong> de taille moyenne. Vend principalement de la régie, du forfait, et de plus en plus du conseil et des POC IA. Ses interlocuteurs sont DSI, directeurs de programme, responsables transformation. Voit ses clients arriver avec des <strong>demandes IA mal formulées</strong> qu'il doit transformer en cahier des charges qui tient debout. Stresse de se faire piéger en RDV par une question technique. Veut comprendre l'IA assez pour la vendre <strong>honnêtement</strong>, sans bluffer ni rester en retrait.</p>
+    </div>
+  </div>
+
+  <p>Mehdi a vu défiler les vagues : la migration cloud en 2017, la transformation digitale en 2019, le télétravail forcé en 2020, le retour du sur-site en 2022. À chaque fois, un narratif marketing qui prétend tout changer, et une réalité commerciale plus lente, plus prosaïque. Mais l'IA, depuis 2024, est une vraie bascule : ses clients DSI ne demandent plus « si » mais « comment et quand », et le commercial qui ne sait pas répondre concrètement perd ses RDV au profit des Big 4 ou des pure players IA.</p>
+
+  <h3>Timeline — six jalons qui ont déplacé la vente de prestations IT</h3>
+
+  <ul class="timeline">
+    <li>
+      <span class="date">NOVEMBRE 2022</span>
+      <span class="title">ChatGPT débarque chez les DSI</span>
+      <span class="desc">Premiers RDV où le DSI demande « et l'IA chez vous ? » sans savoir quoi en attendre. Phase d'évangélisation : on parle plus qu'on ne vend.</span>
+    </li>
+    <li>
+      <span class="date">MI-2023</span>
+      <span class="title">POC partout, déploiements rares</span>
+      <span class="desc">Les budgets IA expérimentaux se débloquent. Les ESN qui savent vendre un POC à forfait (80-120 k€, 8 semaines) prennent l'avantage. Phase d'apprentissage.</span>
+    </li>
+    <li>
+      <span class="date">DÉBUT 2024</span>
+      <span class="title">Microsoft Copilot E5 généralisé</span>
+      <span class="desc">Première vraie vague d'achats IA en entreprise. Les commerciaux Microsoft court-circuitent les ESN sur leurs propres clients. Première grosse alerte sur la nécessité de monter en gamme.</span>
+    </li>
+    <li>
+      <span class="date">FIN 2024</span>
+      <span class="title">Maturité des cas d'usage</span>
+      <span class="desc">Les clients arrêtent de demander « de l'IA » et commencent à demander des copilotes, agents, RAG ciblés. Les commerciaux ESN qui savent qualifier un besoin gagnent. Ceux qui suivent encore les briefs vagues perdent.</span>
+    </li>
+    <li>
+      <span class="date">MI-2025</span>
+      <span class="title">Agentique en production · pricing en évolution</span>
+      <span class="desc">Premiers vrais agents en production chez des grands comptes. Les tickets passent de 80 k€ (POC) à 300-800 k€ (intégration). Mais le risque d'échec monte aussi.</span>
+    </li>
+    <li>
+      <span class="date">2026</span>
+      <span class="title">AI Act applicable · conseil de mise en conformité</span>
+      <span class="desc">Échéance du 2 août 2026 pour les obligations principales. Les ESN qui savent vendre du conseil de mise en conformité (et pas seulement du build) ouvrent une nouvelle ligne de revenu.</span>
+    </li>
+  </ul>
+
+  <h3>Impacts tangibles aujourd'hui</h3>
+
+  <ul>
+    <li><strong>Le brief client devient le sujet, pas le projet.</strong> Le vrai travail commercial n'est plus de proposer un planning, c'est de transformer une demande IA floue en cahier des charges réaliste. Compétence rare, valorisée.</li>
+    <li><strong>La concurrence se reconfigure violemment.</strong> Pure players IA (start-ups spécialisées) sur la profondeur, Big 4 sur la stratégie, GAFAM consulting sur l'évidence. L'ESN classique doit choisir un angle.</li>
+    <li><strong>Les commerciaux qui se forment creusent l'écart.</strong> Pas besoin de devenir ingénieur — mais savoir distinguer un agent d'un RAG, un fine-tuning d'un prompt, un POC d'un MVP, fait gagner les deals.</li>
+    <li><strong>L'avant-vente technique devient stratégique.</strong> Le binôme commercial + AVT devient un atout différenciant. Les ESN qui n'ont pas d'AVT formés à l'IA perdent les soutenances dès la première question pointue.</li>
+  </ul>
+</section>
+
+<!-- ============================================================
+     PAGE 4 — MÉCANIQUE PUSHREF POUR LE DOMAINE DEV
+     ============================================================ -->
+<section class="page">
+  <div class="page-header">
+    <span class="left">[ 03 · MÉCANIQUE ]</span>
+    <span class="right">PUSHREF · DOMAINE COMMERCIAL-ESN</span>
+  </div>
+
+  <h2>La mécanique Pushref pour le domaine <code>commercial-esn</code></h2>
+
+  <p>Pushref ne lit pas le web pour toi. Il lit le web <strong>pour ton domaine</strong>. La différence se joue dans un mécanisme précis : les sondes. Une sonde est un mot-clé chargé d'intention éditoriale ; elle dit « cet article est <em>pour</em> ce domaine » ou « cet article <em>n'est pas</em> pour ce domaine ». Pushref applique ces sondes à chaque article ingéré, calcule un score, et décide si l'article entre dans ton flux ou non.</p>
+
+  <div class="callout">
+    <div class="callout-title">[ COMMENT ÇA MARCHE ]</div>
+    <p style="margin:0">Quatre types de sondes interviennent : <strong>inclusive</strong> (poids +1.0, l'article doit en toucher), <strong>boost</strong> (poids +1.5, augmente le score sans être obligatoire), <strong>exclusive</strong> (poids −1.0, pénalise jusqu'à éjection probable), <strong>strict_exclude</strong> (poids −10.0, éjection sans appel). Les sondes alimentent aussi les prompts système d'enrichissement, de QCM et de sandbox — elles cadrent le ton et le périmètre du domaine au-delà du simple filtrage.</p>
+  </div>
+
+  <p>Sur <code>commercial-esn</code>, les sondes sont calibrées sur l'utilité commerciale immédiate : qualifier un besoin, chiffrer un POC, distinguer les outils éditeurs, vendre la conformité, parer une question technique en RDV. Elles excluent le code et l'implémentation (qui appartiennent au domaine des développeurs), les hacks de prospection toxique, et la hype sans valeur d'argument.</p>
+
+  <h3>Zoom sondes — les sept pivots</h3>
+
+  <div class="probes">
+    <div class="probe">
+      <div class="probe-name">qualification-discovery</div>
+      <div class="probe-why">Qualifier les besoins IA mal formulés. MEDDIC/MEDDPICC adaptés à l'IA. Transformer « on veut faire de l'IA » en cahier des charges réaliste.</div>
+    </div>
+    <div class="probe">
+      <div class="probe-name">cas-usage-chiffrage</div>
+      <div class="probe-why">Cas d'usage entreprise (copilotes, agents, RAG corporate), sizing, chiffrage POC, ROI mesuré. Le cœur de la conversation commerciale.</div>
+    </div>
+    <div class="probe">
+      <div class="probe-name">outils-editeurs-enterprise</div>
+      <div class="probe-why">Microsoft 365 Copilot, Claude Enterprise, Gemini Enterprise, Mistral, AWS Bedrock, Salesforce Einstein, ServiceNow AI. Le panorama des solutions à comparer.</div>
+    </div>
+    <div class="probe">
+      <div class="probe-name">concepts-techniques</div>
+      <div class="probe-why">RAG, agent, MCP, fine-tuning vs prompt, fenêtre de contexte, hallucination — vulgarisés pour vendre, pas pour coder.</div>
+    </div>
+    <div class="probe">
+      <div class="probe-name">reglementation-conformite</div>
+      <div class="probe-why">AI Act, RGPD-IA, gouvernance, charte interne, registre des traitements. La nouvelle ligne de conseil à vendre.</div>
+    </div>
+    <div class="probe">
+      <div class="probe-name">vente-ecosysteme</div>
+      <div class="probe-why">Soutenances, RFP, partenariats éditeurs, concurrence Big 4, pure players IA. L'écosystème commercial où tu opères.</div>
+    </div>
+    <div class="probe">
+      <div class="probe-name">securite-shadow-ai</div>
+      <div class="probe-why">Shadow AI, prompt injection, leak de prompts, classification de données, ISO 42001. Sujet montant en avant-vente sécurité.</div>
+    </div>
+  </div>
+
+  <h3>Et inversement — ce que les sondes <em>excluent</em></h3>
+
+  <p>Les sondes exclusives protègent le flux de ce qui ferait perdre du temps à Mehdi : <em>5 prompts magiques pour vendre</em>, <em>10 hacks vente IA</em>, <em>passive income sales</em>, <em>MLM sales</em>, <em>cold call automation toxique</em>, <em>arXiv paper</em>, <em>transformer architecture</em>, <em>SWE-bench</em>. Tout ce qui est hustle, manipulation commerciale, ou technique pure (utile au domaine des développeurs, pas à la vente) reste dehors.</p>
+</section>
+
+<!-- ============================================================
+     PAGE 5 — LE PARCOURS PUSHREF + WORKFLOW SVG
+     ============================================================ -->
+<section class="page">
+  <div class="page-header">
+    <span class="left">[ 04 · PARCOURS ]</span>
+    <span class="right">PUSHREF · DOMAINE COMMERCIAL-ESN</span>
+  </div>
+
+  <h2>Le parcours Pushref, étape par étape</h2>
+
+  <p>Le parcours Pushref n'est pas linéaire. C'est un <strong>cycle</strong>, et chaque utilisateur peut y entrer à n'importe quel point, en sortir, y revenir. Mais il y a un ordre conseillé qui maximise l'apprentissage.</p>
+
+  <div class="workflow-wrap">
+        <svg viewBox="0 0 760 230" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Workflow Pushref : test de niveau, flux d'articles, QCM, sandbox, partages">
+      <!-- Définitions -->
+      <defs>
+        <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto" markerUnits="strokeWidth">
+          <path d="M0,0 L10,5 L0,10 L2,5 z" fill="#D87F2C"/>
+        </marker>
+      </defs>
+
+      <!-- Filets de fond -->
+      <line x1="20" y1="115" x2="740" y2="115" stroke="#F2C896" stroke-width="1" stroke-dasharray="2,3"/>
+
+      <!-- Étape 1 : Test de niveau -->
+      <g>
+        <rect x="20" y="65" width="120" height="100" rx="6" fill="#FAFAF7" stroke="#34495E" stroke-width="2"/>
+        <text x="80" y="92" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace" font-size="9" fill="#22313F" letter-spacing="1.5">[ 01 ]</text>
+        <text x="80" y="115" text-anchor="middle" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#14181A">Test</text>
+        <text x="80" y="132" text-anchor="middle" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#14181A">de niveau</text>
+        <text x="80" y="152" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="8.5" fill="#4A5258">passable plusieurs fois</text>
+      </g>
+
+      <line x1="142" y1="115" x2="172" y2="115" stroke="#D87F2C" stroke-width="2" marker-end="url(#arrow)"/>
+
+      <!-- Étape 2 : Flux -->
+      <g>
+        <rect x="174" y="65" width="120" height="100" rx="6" fill="#FAFAF7" stroke="#34495E" stroke-width="2"/>
+        <text x="234" y="92" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace" font-size="9" fill="#22313F" letter-spacing="1.5">[ 02 ]</text>
+        <text x="234" y="115" text-anchor="middle" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#14181A">Flux</text>
+        <text x="234" y="132" text-anchor="middle" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#14181A">d'articles</text>
+        <text x="234" y="152" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="8.5" fill="#4A5258">enrichis par LLM</text>
+      </g>
+
+      <line x1="296" y1="115" x2="326" y2="115" stroke="#D87F2C" stroke-width="2" marker-end="url(#arrow)"/>
+
+      <!-- Étape 3 : QCM -->
+      <g>
+        <rect x="328" y="65" width="120" height="100" rx="6" fill="#FAFAF7" stroke="#34495E" stroke-width="2"/>
+        <text x="388" y="92" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace" font-size="9" fill="#22313F" letter-spacing="1.5">[ 03 ]</text>
+        <text x="388" y="115" text-anchor="middle" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#14181A">QCM</text>
+        <text x="388" y="132" text-anchor="middle" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#14181A">techniques</text>
+        <text x="388" y="152" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="8.5" fill="#4A5258">+ révisions SRS</text>
+      </g>
+
+      <line x1="450" y1="115" x2="480" y2="115" stroke="#D87F2C" stroke-width="2" marker-end="url(#arrow)"/>
+
+      <!-- Étape 4 : Sandbox (highlight) -->
+      <g>
+        <rect x="482" y="65" width="120" height="100" rx="6" fill="#0E141B" stroke="#34495E" stroke-width="2.5"/>
+        <text x="542" y="92" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace" font-size="9" fill="#34495E" letter-spacing="1.5">[ 04 ]</text>
+        <text x="542" y="115" text-anchor="middle" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#E8EDEE">Sandbox</text>
+        <text x="542" y="132" text-anchor="middle" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#E8EDEE">comparative</text>
+        <text x="542" y="152" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="8.5" fill="#C8CFD0">cross-LLM</text>
+      </g>
+
+      <line x1="604" y1="115" x2="634" y2="115" stroke="#D87F2C" stroke-width="2" marker-end="url(#arrow)"/>
+
+      <!-- Étape 5 : Partages -->
+      <g>
+        <rect x="636" y="65" width="104" height="100" rx="6" fill="#FAFAF7" stroke="#D87F2C" stroke-width="2"/>
+        <text x="688" y="92" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace" font-size="9" fill="#D87F2C" letter-spacing="1.5">[ 05 ]</text>
+        <text x="688" y="115" text-anchor="middle" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#14181A">Partages</text>
+        <text x="688" y="132" text-anchor="middle" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#14181A">+ digest</text>
+        <text x="688" y="152" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="8.5" fill="#4A5258">collègues, équipe</text>
+      </g>
+
+      <!-- Boucle de retour -->
+      <path d="M 688 65 Q 688 25 380 25 Q 80 25 80 65"
+            fill="none" stroke="#22313F" stroke-width="1.5" stroke-dasharray="4,4" marker-end="url(#arrow)"/>
+      <text x="380" y="18" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace" font-size="8.5" fill="#22313F" letter-spacing="1.2">CYCLE — repassable autant de fois que tu veux</text>
+
+      <!-- Ligne du bas : titres compacts -->
+      <text x="80"  y="200" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#4A5258">tu te situes</text>
+      <text x="234" y="200" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#4A5258">tu lis ce qui compte</text>
+      <text x="388" y="200" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#4A5258">tu valides</text>
+      <text x="542" y="200" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#4A5258">tu pratiques</text>
+      <text x="688" y="200" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#4A5258">tu diffuses</text>
+    </svg>
+    <div class="workflow-caption">PARCOURS PUSHREF · DOMAINE COMMERCIAL-ESN</div>
+  </div>
+
+  <h3>1. Le test de niveau</h3>
+  <p><strong>Vingt-cinq questions</strong> qui balayent l'ensemble des sondes du domaine — pas un échantillon, pas un raccourci : la totalité des thématiques que Pushref ingère pour <code>commercial-esn</code> y est représentée. Trois résultats possibles : <strong>intermédiaire</strong>, <strong>avancé</strong>, <strong>expert</strong>. Le niveau ajuste la profondeur des analyses, le calibre des QCM, et la complexité des prompts proposés en sandbox.</p>
+
+  <h3>2. Le flux d'articles enrichis</h3>
+  <p>Chaque article du flux a été pré-enrichi par un LLM avec le prompt système du domaine : <strong>contexte</strong>, <strong>résumé avec chiffres préservés</strong>, <strong>points clés</strong>, <strong>argument actionnable en RDV</strong>. Le ton est calibré pour <code>commercial-esn</code> : pragmatique, honnête, terrain — un commercial expérimenté à un commercial expérimenté.</p>
+
+  <h3>3. Le QCM et les révisions SRS</h3>
+  <p>Pour chaque article ouvert, un QCM auto-généré te propose 4 à 6 questions — sur les outils, les chiffres, les méthodologies, les pièges. Les questions ratées entrent dans une queue de révision en <em>spaced repetition</em> à la SuperMemo. Un seul rappel hebdo si la queue dépasse dix items en attente.</p>
+
+  <h3>4. La sandbox comparative cross-LLM</h3>
+  <p>Tu poses une question — par exemple <em>« rédige-moi une réponse à un RFP IA pour un retailer 200 magasins, avec sizing, planning et conditions commerciales »</em> — et Pushref te montre <strong>côte à côte</strong> les réponses de Claude, GPT, Gemini et Mistral. Tu compares la rigueur, le ton, la pertinence commerciale. Plusieurs sandbox à terme ; pour l'instant <strong>une seule disponible — la plus structurante</strong> : la sandbox cross-LLM.</p>
+
+  <h3>5. Les partages</h3>
+  <p>Tu peux partager un article enrichi, un run sandbox, un résultat de QCM, ou ta note hebdo personnelle. Chaque lien est public, frappé de ton pseudo et de ton avatar — avec une OG image dynamique pour LinkedIn, équipe commerciale ou avant-vente technique.</p>
+</section>
+
+<!-- ============================================================
+     PAGE 6 — Conclusion (sur la même page que le parcours
+     ne tient pas, donc on passe en page 6 dédiée + ending sombre)
+     ============================================================ -->
+<section class="page">
+  <div class="page-header">
+    <span class="left">[ 05 · POURQUOI ÇA MARCHE ]</span>
+    <span class="right">PUSHREF · DOMAINE COMMERCIAL-ESN</span>
+  </div>
+
+  <h2>Pourquoi ça marche pour le domaine <code>commercial-esn</code></h2>
+
+  <p>Pour Mehdi, comme pour les soixante mille commerciaux ESN et indépendants en vente de prestations IT francophones qui voient leur métier se réinventer en accéléré, Pushref offre quelque chose qu'aucun outil ne propose isolément :</p>
+
+  <ul>
+    <li><strong>La discipline éditoriale terrain</strong> des sources sélectionnées (Numeum, CIGREF, Usine Digitale, Gartner, Sales Hacker, customer stories des éditeurs) — vs LinkedIn rempli de promesses de growth-hackers.</li>
+    <li><strong>Le contexte enrichi avec arguments actionnables</strong> (vs lire un article et ne pas savoir quoi en faire en RDV demain matin).</li>
+    <li><strong>La pratique comparée cross-LLM</strong> pour préparer une réponse à un RFP, structurer un POC, rédiger un compte-rendu de discovery — sur quatre IA en parallèle.</li>
+    <li><strong>L'ancrage SRS</strong> pour retenir les chiffres marché, les noms d'outils, les méthodologies que tu auras à citer en soutenance.</li>
+    <li><strong>Le partage avec ton équipe et ton avant-vente</strong> — la transformation commerciale d'une ESN est collective, pas un solo de top-performer.</li>
+  </ul>
+
+  <p>Pas un de ces éléments pris isolément ne suffit. Ce qui fait Pushref, c'est leur combinaison dans un même produit, autour d'un même domaine, avec une politique éditoriale cohérente. C'est cette combinaison que l'AIPushTech revendique comme catégorie.</p>
+
+  <h3>Trois choses concrètes que tu repartiras avec, après une semaine sur Pushref</h3>
+
+  <ul class="is">
+    <li>Une grille de qualification de besoins IA personnelle, testée et adoptée — pas une grille théorique trouvée sur LinkedIn.</li>
+    <li>Un benchmark des trois ou quatre solutions enterprise testées en sandbox cross-LLM, avec leurs forces et leurs limites pour tes typologies de clients.</li>
+    <li>Une queue de révisions SRS qui transforme ce que tu lis en arguments concrets que tu utilises en RDV.</li>
+  </ul>
+
+  <p class="pull">L'objectif n'est pas que tu deviennes ingénieur IA en six mois. L'objectif est que tu sois le commercial à qui le client fait confiance pour le guider — sans bluff, sans hype, sans peur.</p>
+</section>
+
+<!-- ============================================================
+     PAGE 7 — CONCLUSION (full-bleed noir)
+     ============================================================ -->
+<section class="ending">
+  <div class="tag">[ 06 · CONCLUSION ]</div>
+  <h2>Qualifier. Vendre. Tenir.</h2>
+
+  <p>Pushref ne te promet pas que tu fermeras tous tes deals IA en une semaine. Personne ne peut promettre ça honnêtement. Pushref te promet quelque chose de plus utile : <strong>un endroit où tu progresses chaque semaine sur du concret</strong>, en lisant ce qui compte, en testant pour de vrai, en ancrant les arguments, en partageant avec ton équipe.</p>
+
+  <p>C'est de la veille technologique, oui — mais une veille qui te fait gagner des deals. C'est de l'apprentissage, oui — mais un apprentissage qui parle métier, pas théorie. C'est un produit, oui — mais un produit qui te rend conseil plutôt que vendeur.</p>
+
+  <p>Tu rentres quand tu veux. Tu repasses le test de niveau quand tu veux. Tu compares les LLM quand tu veux. Tu partages quand tu veux. Tu progresses parce que la mécanique a été pensée pour ça — pas pour te scotcher à un streak quotidien, mais pour t'aider à devenir le commercial à qui ton client fait confiance pour le guider dans la transformation IA.</p>
+
+  <div class="ending-rule"></div>
+
+  <p class="signature">— Bienvenue sur Pushref, domaine <code style="background:transparent;color:#34495E">commercial-esn</code>.</p>
+</section>
+
+</body>
+</html>
