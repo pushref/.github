@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Pushref · GIS & Géomatique — Note fondatrice</title>
+<style>
+  /* =========================================================================
+     CHARTE DOMAINE `gis-geomatique`
+     Primaire : vert forêt #2A6F4F
+     Accent   : bronze AIPushTech #C67A2C
+     Fond     : noir profond pour cover, paper pour la lecture
+     ========================================================================= */
+  :root {
+    --primary: #2A6F4F;
+    --primary-dim: #1F5238;
+    --primary-soft: #8DB5A1;
+    --accent: #C67A2C;
+    --accent-soft: #E8C49A;
+    --ink: #14181A;
+    --ink-soft: #4A5258;
+    --rule: #D9DDE0;
+    --paper: #FAFAF7;
+    --paper-2: #ECEEF0;
+    --hero-bg: #0F0F0F;
+    --hero-fg: #E8EDEE;
+    --serif: Georgia, "Times New Roman", serif;
+    --sans:  -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --mono:  "JetBrains Mono", "Consolas", "Menlo", "Courier New", monospace;
+  }
+
+  @page { size: A4 portrait; margin: 0; }
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 10.5pt;
+    line-height: 1.5;
+    font-feature-settings: "kern" 1, "liga" 1;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  @media screen {
+    body {
+      max-width: 210mm;
+      margin: 24px auto;
+      box-shadow: 0 1px 2px rgba(0,0,0,.06), 0 12px 36px rgba(0,0,0,.08);
+      border-radius: 4px;
+    }
+  }
+
+  p { margin: 0 0 0.55em 0; text-align: justify; hyphens: auto; }
+  strong { color: var(--ink); }
+  em { color: var(--ink-soft); }
+  ul { margin: 0.3em 0 0.7em 0; padding-left: 1.2em; }
+  ul li { margin: 0.15em 0; }
+  ul li::marker { color: var(--accent); }
+  a { color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--accent-soft); }
+
+  .tag {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 8.5pt;
+    letter-spacing: 0.18em;
+    color: var(--primary);
+    text-transform: uppercase;
+    margin-bottom: 6pt;
+  }
+  .tag::before { content: "■  "; color: var(--accent); }
+
+  h1, h2, h3 { font-family: var(--serif); color: var(--ink); margin: 0; }
+
+  h1 {
+    font-size: 30pt;
+    line-height: 1.1;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin: 0 0 8pt 0;
+  }
+
+  h2 {
+    font-size: 16pt;
+    line-height: 1.2;
+    font-weight: 700;
+    margin: 10pt 0 5pt 0;
+    padding-bottom: 3pt;
+    border-bottom: 1.5pt solid var(--accent);
+  }
+
+  h3 {
+    font-size: 11pt;
+    line-height: 1.3;
+    font-weight: 700;
+    margin: 8pt 0 3pt 0;
+    color: var(--accent);
+    font-family: var(--sans);
+    letter-spacing: 0.01em;
+  }
+
+  /* PAGE DE GARDE */
+  .cover {
+    background: var(--hero-bg);
+    color: var(--hero-fg);
+    padding: 32mm 22mm 24mm 22mm;
+    page-break-after: always;
+    height: 297mm;
+    width: 210mm;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+  .cover .cover-eyebrow {
+    font-family: var(--mono);
+    color: var(--primary-soft);
+    font-size: 10pt;
+    letter-spacing: 0.2em;
+    margin-bottom: 32pt;
+  }
+  .cover h1 {
+    color: var(--hero-fg);
+    font-size: 48pt;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 18pt;
+    max-width: 14ch;
+  }
+  .cover .cover-tagline {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 18pt;
+    color: var(--accent);
+    line-height: 1.3;
+    margin-bottom: 24pt;
+    max-width: 28ch;
+  }
+  .cover .cover-rule {
+    width: 64pt;
+    height: 2.5pt;
+    background: var(--accent);
+    margin: 8pt 0 24pt 0;
+  }
+  .cover .cover-domain {
+    font-family: var(--mono);
+    font-size: 9.5pt;
+    color: var(--primary-soft);
+    letter-spacing: 0.12em;
+    margin-bottom: 4pt;
+  }
+  .cover .cover-domain .dot { color: var(--accent); margin: 0 6pt; }
+  .cover .cover-domain strong { color: var(--hero-fg); }
+  .cover .cover-bottom {
+    margin-top: auto;
+    padding-top: 20pt;
+    border-top: 1pt solid #2A2A2A;
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--mono);
+    font-size: 9pt;
+    color: var(--primary-soft);
+    letter-spacing: 0.1em;
+  }
+  .cover .cover-bottom strong { color: var(--accent); }
+
+  /* PAGE INTÉRIEURE */
+  .page {
+    padding: 18mm 22mm 22mm 22mm;
+    page-break-after: always;
+    height: 297mm;
+    width: 210mm;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--mono);
+    font-size: 8pt;
+    letter-spacing: 0.16em;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    border-bottom: 0.5pt solid var(--rule);
+    padding-bottom: 4pt;
+    margin-bottom: 12pt;
+  }
+  .page-header .left { color: var(--primary); }
+  .page-header .right { color: var(--ink-soft); }
+  .page-footer {
+    margin-top: auto;
+    padding-top: 10pt;
+    border-top: 0.5pt solid var(--rule);
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--mono);
+    font-size: 8pt;
+    color: var(--ink-soft);
+    letter-spacing: 0.12em;
+  }
+  .page-footer .pagenum { color: var(--accent); font-weight: 700; }
+
+  /* LEAD */
+  p.lead {
+    font-family: var(--serif);
+    font-size: 13pt;
+    line-height: 1.45;
+    color: var(--ink);
+    margin-bottom: 10pt;
+  }
+
+  /* PERSONA CARD */
+  .persona {
+    display: flex;
+    gap: 12pt;
+    background: var(--paper-2);
+    border-left: 3pt solid var(--primary);
+    padding: 10pt 12pt;
+    margin: 8pt 0 10pt 0;
+    page-break-inside: avoid;
+  }
+  .persona-avatar {
+    flex: 0 0 38pt;
+    height: 38pt;
+    border-radius: 50%;
+    background: var(--primary);
+    color: var(--hero-fg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--serif);
+    font-size: 22pt;
+    font-weight: 700;
+  }
+  .persona-body { flex: 1; }
+  .persona-name {
+    font-family: var(--serif);
+    font-size: 14pt;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 2pt;
+  }
+  .persona-name .meta {
+    font-family: var(--mono);
+    font-size: 8pt;
+    letter-spacing: 0.14em;
+    color: var(--primary);
+    margin-left: 8pt;
+    text-transform: uppercase;
+    font-weight: 400;
+  }
+  .persona-desc {
+    font-size: 9.5pt;
+    line-height: 1.5;
+    margin: 0;
+    color: var(--ink-soft);
+  }
+
+  /* TIMELINE */
+  ul.timeline {
+    list-style: none;
+    padding: 0;
+    margin: 4pt 0 8pt 0;
+    border-left: 1.5pt solid var(--primary-soft);
+    padding-left: 16pt;
+  }
+  ul.timeline li {
+    margin: 0 0 10pt 0;
+    position: relative;
+  }
+  ul.timeline li::marker { content: ""; }
+  ul.timeline li::before {
+    content: "";
+    position: absolute;
+    left: -22pt;
+    top: 5pt;
+    width: 7pt;
+    height: 7pt;
+    border-radius: 50%;
+    background: var(--primary);
+    box-shadow: 0 0 0 2pt var(--paper);
+  }
+  ul.timeline .date {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 8.5pt;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    font-weight: 700;
+    margin-right: 6pt;
+    text-transform: uppercase;
+  }
+  ul.timeline .title { font-weight: 700; color: var(--ink); }
+  ul.timeline .desc {
+    display: block;
+    font-size: 9.5pt;
+    color: var(--ink-soft);
+    margin-top: 2pt;
+    line-height: 1.4;
+  }
+
+  /* IS / IS NOT lists */
+  ul.is, ul.is-not {
+    list-style: none;
+    padding: 0;
+    margin: 4pt 0 10pt 0;
+  }
+  ul.is li, ul.is-not li {
+    padding: 4pt 0 4pt 22pt;
+    position: relative;
+    font-size: 10pt;
+  }
+  ul.is li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    top: 3pt;
+    color: var(--primary);
+    font-weight: 700;
+  }
+  ul.is-not li::before {
+    content: "×";
+    position: absolute;
+    left: 0;
+    top: 1pt;
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 14pt;
+  }
+
+  /* ZOOM PROBES (sondes en cartes) */
+  .probes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8pt;
+    margin: 6pt 0;
+  }
+  .probe {
+    border: 1pt solid var(--rule);
+    border-left: 3pt solid var(--primary);
+    padding: 7pt 9pt;
+    background: var(--paper);
+    border-radius: 0 4pt 4pt 0;
+    font-size: 9.5pt;
+    line-height: 1.35;
+    page-break-inside: avoid;
+  }
+  .probe .probe-name {
+    font-family: var(--mono);
+    color: var(--primary-dim);
+    font-size: 9pt;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    margin-bottom: 2pt;
+  }
+  .probe .probe-why { color: var(--ink-soft); font-size: 9pt; }
+
+  /* WORKFLOW SVG */
+  .workflow-wrap {
+    margin: 8pt -2pt 10pt -2pt;
+    page-break-inside: avoid;
+  }
+  .workflow-wrap svg { width: 100%; height: auto; display: block; }
+  .workflow-caption {
+    font-family: var(--mono);
+    font-size: 8pt;
+    letter-spacing: 0.14em;
+    color: var(--ink-soft);
+    text-align: center;
+    text-transform: uppercase;
+    margin-top: 3pt;
+  }
+
+  /* CONCLUSION (cover sombre) */
+  .ending {
+    background: var(--hero-bg);
+    color: var(--hero-fg);
+    padding: 24mm 22mm;
+    height: 297mm;
+    width: 210mm;
+    page-break-before: always;
+    display: flex;
+    flex-direction: column;
+  }
+  .ending .tag { color: var(--primary-soft); }
+  .ending h2 {
+    color: var(--hero-fg);
+    border-bottom: 1.5pt solid var(--primary);
+    font-size: 26pt;
+    margin: 8pt 0 14pt 0;
+    padding-bottom: 6pt;
+  }
+  .ending p { color: var(--hero-fg); margin-bottom: 10pt; line-height: 1.5; }
+  .ending .ending-quote {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 18pt;
+    line-height: 1.35;
+    color: var(--accent);
+    border-left: 2pt solid var(--accent);
+    padding-left: 14pt;
+    margin: 16pt 0;
+  }
+  .ending .ending-bottom {
+    margin-top: auto;
+    padding-top: 16pt;
+    border-top: 1pt solid #2A2A2A;
+    font-family: var(--mono);
+    font-size: 9pt;
+    color: var(--primary-soft);
+    letter-spacing: 0.1em;
+    display: flex;
+    justify-content: space-between;
+  }
+  .ending .ending-bottom strong { color: var(--accent); }
+
+  /* PULL QUOTE */
+  .pull {
+    border-left: 3pt solid var(--accent);
+    padding: 4pt 0 4pt 14pt;
+    margin: 8pt 0;
+    font-family: var(--serif);
+    font-style: italic;
+    color: var(--ink);
+    font-size: 11.5pt;
+    line-height: 1.4;
+  }
+
+  /* STAT */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10pt;
+    margin: 10pt 0;
+  }
+  .stat {
+    border: 1pt solid var(--rule);
+    border-top: 3pt solid var(--primary);
+    padding: 10pt;
+    text-align: center;
+  }
+  .stat .num {
+    font-family: var(--serif);
+    font-size: 22pt;
+    font-weight: 700;
+    color: var(--primary);
+    line-height: 1.05;
+  }
+  .stat .lab {
+    font-family: var(--mono);
+    font-size: 8pt;
+    color: var(--ink-soft);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-top: 4pt;
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================== COVER ============================== -->
+<section class="cover">
+  <div class="cover-eyebrow">[  PUSHREF  ·  AIPUSHTECH  ·  NOTE FONDATRICE  ]</div>
+
+  <h1>GIS &amp; Géomatique</h1>
+
+  <div class="cover-rule"></div>
+
+  <div class="cover-tagline">Cartographier ce qui change. Sans rater ce qui compte.</div>
+
+  <div class="cover-domain">
+    <span class="mono">domaine</span>
+    <span class="dot">·</span>
+    <strong>gis-geomatique</strong>
+    <span class="dot">·</span>
+    <span class="mono">v1.0</span>
+  </div>
+
+  <div class="cover-bottom">
+    <div><strong>PUSHREF</strong> &nbsp;·&nbsp; édité par AIPushTech</div>
+    <div>30 AVRIL 2026 &nbsp;·&nbsp; <strong>FR</strong></div>
+  </div>
+</section>
+
+<!-- ============================== PAGE 1 ============================== -->
+<section class="page">
+  <div class="page-header">
+    <span class="left">[ 01 · LA GÉOMATIQUE EN 2026 ]</span>
+    <span class="right">PUSHREF · DOMAINE GIS-GÉOMATIQUE</span>
+  </div>
+
+  <h2>La géomatique en 2026</h2>
+
+  <p class="lead">Il y a quinze ans, le géomaticien était d'abord un cartographe. Aujourd'hui, ce métier a quasiment disparu — non parce qu'il n'y a plus de cartes à faire, mais parce que les cartes ne sont plus le cœur du travail.</p>
+
+  <p>Le géomaticien moderne est un <strong>ingénieur de la donnée géographique</strong>. Il code en Python, structure des bases PostGIS, déploie des chaînes de traitement automatisées, intègre des résultats de modèles deep learning, et discute architecture data avec des DSI. Métier hybride à mi-chemin entre le développeur, l'analyste de données, et l'expert territorial.</p>
+
+  <p>Et ce métier vient de prendre la plus grande secousse de son histoire récente : l'arrivée des <strong>modèles fondationnels d'observation de la Terre</strong>.</p>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="num">2023</div>
+      <div class="lab">Prithvi-EO 1.0 publié<br>NASA + IBM</div>
+    </div>
+    <div class="stat">
+      <div class="num">600 M</div>
+      <div class="lab">paramètres<br>Prithvi 2.0 (déc. 2024)</div>
+    </div>
+    <div class="stat">
+      <div class="num">9</div>
+      <div class="lab">modalités<br>TerraMind (2025)</div>
+    </div>
+  </div>
+
+  <p>En moins de trois ans, le paysage a basculé. La classification supervisée d'images satellite — qui occupait jadis des semaines de travail à étiqueter manuellement, à entraîner un Random Forest, à valider — peut désormais être ramenée à <strong>quelques heures de fine-tuning</strong> sur un modèle pré-entraîné.</p>
+
+  <p>Mais comme toujours quand un métier prend une secousse, deux pièges apparaissent.</p>
+
+  <ul class="is-not">
+    <li><strong>La fascination.</strong> <em>« On va tout automatiser. »</em> Comme si l'expertise géographique n'avait plus d'utilité.</li>
+    <li><strong>Le repli.</strong> <em>« L'IA, c'est de la hype, on continue comme avant. »</em> Comme si rien ne changeait.</li>
+  </ul>
+
+  <p>L'AIPushTech existe pour aider les professionnels — qui n'ont pas le temps de lire dix newsletters par semaine, encore moins les papiers ArXiv — à naviguer entre ces deux pièges. Sept pages pour poser le décor.</p>
+
+  <div class="page-footer">
+    <span>AIPUSHTECH · NOTE FONDATRICE</span>
+    <span class="pagenum">1 / 7</span>
+  </div>
+</section>
+
+<!-- ============================== PAGE 2 ============================== -->
+<section class="page">
+  <div class="page-header">
+    <span class="left">[ 02 · LE PERSONA ]</span>
+    <span class="right">PUSHREF · DOMAINE GIS-GÉOMATIQUE</span>
+  </div>
+
+  <h2>Camille, ingénieur·e géomatique</h2>
+
+  <div class="persona">
+    <div class="persona-avatar">C</div>
+    <div class="persona-body">
+      <div class="persona-name">Camille <span class="meta">PERSONA · DOMAINE GIS-GÉOMATIQUE</span></div>
+      <p class="persona-desc"><strong>33 ans, ingénieur·e géomatique en mission territoriale.</strong> Profil hybride entre développement technique (Python, QGIS, PostGIS, scripts d'automatisation) et travail métier sur le territoire (collectivités, agences d'urbanisme, bureaux d'études). 5-8 ans d'expérience. A connu l'époque des SIG bureautiques et la migration cloud. A appris Python et SQL « sur le tas ». Code sans se prendre pour une développeuse, mais plus à l'aise techniquement que beaucoup de ses pairs.</p>
+    </div>
+  </div>
+
+  <h3>Stack quotidien</h3>
+  <p>QGIS au quotidien, ArcGIS Pro pour les projets clients Esri, FME pour l'ETL. Python (geopandas, rasterio, shapely), SQL/PostGIS, JavaScript pour le webmapping. Touche aussi à GEE, Sentinel Hub, Microsoft Planetary Computer. Bases PostgreSQL/PostGIS principalement.</p>
+
+  <h3>Tâches typiques</h3>
+  <p>Acquérir, nettoyer, intégrer des données géographiques de sources hétérogènes. Produire des analyses spatiales (zonage, propagation, isochrones, MNT). Concevoir des cartes thématiques pour décideurs. Maintenir des couches métiers dans des SIG métropolitains. Et de plus en plus : <strong>intégrer des résultats de classification IA</strong> (cadastre auto, détection de changements).</p>
+
+  <h3>Douleurs principales</h3>
+  <ul>
+    <li><strong>Le déluge IA.</strong> Promesses partout (segmentation auto, classification de toits, jumeaux numériques) mais peu de retours d'expérience consolidés sur ce qui marche en production.</li>
+    <li><strong>L'écart méthodo.</strong> Les méthodes statistiques classiques deviennent invisibles face à la hype IA, alors qu'elles restent souvent plus robustes.</li>
+    <li><strong>Le coût computationnel.</strong> Les modèles fondationnels sont open source mais demandent du GPU pour le fine-tuning ; les collectivités ont rarement l'infra.</li>
+    <li><strong>L'illusion du « sans-code ».</strong> Les solutions Esri AI ou QGIS plugins promettent la magie, mais les workflows de production demandent du contrôle qu'on n'obtient qu'en code.</li>
+  </ul>
+
+  <h3>Aspirations</h3>
+  <p>Comprendre les modèles fondationnels (Prithvi, TerraMind, Clay, AlphaEarth) sans devoir lire les papiers ArXiv. Identifier les usages IA en géomatique qui marchent vraiment vs ceux qui sont du marketing. Garder une longueur d'avance technique sur ses pairs. <strong>Conserver son rôle d'expert métier face à l'arrivée des « data scientists généralistes ».</strong></p>
+
+  <div class="page-footer">
+    <span>AIPUSHTECH · NOTE FONDATRICE</span>
+    <span class="pagenum">2 / 7</span>
+  </div>
+</section>
+
+<!-- ============================== PAGE 3 ============================== -->
+<section class="page">
+  <div class="page-header">
+    <span class="left">[ 03 · TRAJECTOIRE 2020-2026 ]</span>
+    <span class="right">PUSHREF · DOMAINE GIS-GÉOMATIQUE</span>
+  </div>
+
+  <h2>Ce que l'IA a changé</h2>
+
+  <p>Pour comprendre où on est en 2026, il faut tracer brièvement la trajectoire des cinq dernières années.</p>
+
+  <ul class="timeline">
+    <li>
+      <span class="date">2020-2022</span>
+      <span class="title">Classification from scratch</span>
+      <span class="desc">Random Forests ou réseaux convolutifs entraînés from scratch sur datasets manuellement labellisés. Méthode robuste mais coûteuse : 1000-10000 images annotées par tâche. Outils de référence : scikit-learn, eo-learn, notebooks personnalisés.</span>
+    </li>
+    <li>
+      <span class="date">AOÛT 2023</span>
+      <span class="title">Prithvi-EO 1.0 (NASA + IBM)</span>
+      <span class="desc">Premier modèle fondationnel géospatial vraiment ouvert et utilisable. 100M paramètres, MAE-pretrained sur 1 To d'images HLS. Quatre cas d'usage initiaux : flood mapping, burn scar detection, cloud gap imputation, crop segmentation.</span>
+    </li>
+    <li>
+      <span class="date">DÉCEMBRE 2024</span>
+      <span class="title">Prithvi-EO 2.0 — 6× plus grand</span>
+      <span class="desc">600M paramètres, 4,2 millions d'échantillons. Score 75,6% sur GEO-Bench, 8 points au-dessus. L'écosystème se densifie : Clay Foundation Model, Microsoft AI for Good, Esri intègre l'IA dans ArcGIS Pro.</span>
+    </li>
+    <li>
+      <span class="date">2025</span>
+      <span class="title">TerraMind (IBM + ESA)</span>
+      <span class="desc">Modèle multimodal d'une ambition nouvelle. 9 modalités simultanées : optique, SAR, élévation, météo, annotations textuelles. Peut générer les modalités manquantes. Étape vers les assistants géospatiaux conversationnels.</span>
+    </li>
+    <li>
+      <span class="date">2026</span>
+      <span class="title">AlphaEarth, Geospatial Reasoning, ArcGIS AI 4.0</span>
+      <span class="desc">Interroger une carte se fait en français. Fine-tuner sur sa zone se fait en quelques heures GPU. L'analyse de changement temporel sur 10 ans tourne sur un laptop équipé d'une RTX 4080.</span>
+    </li>
+  </ul>
+
+  <h3>Cinq transformations pratiques pour Camille</h3>
+  <ul>
+    <li><strong>La classification supervisée s'effondre en coût.</strong> 200 images suffisent souvent là où il en fallait 5000.</li>
+    <li><strong>L'analyse multimodale devient native.</strong> Combiner optique + SAR + élévation n'est plus un problème d'intégration mais une question d'API.</li>
+    <li><strong>Le langage naturel entre dans la chaîne.</strong> <em>« Montre-moi les changements de bâti dans cette commune »</em> devient une requête exécutable.</li>
+    <li><strong>La barrière à l'entrée s'abaisse pour les petites collectivités.</strong> Hugging Face permet à une métropole intermédiaire d'égaler en qualité ce que faisaient les grands acteurs.</li>
+    <li><strong>La frontière géomaticien / data scientist s'estompe.</strong> Camille, qui code, va naturellement vers la maîtrise de ces outils.</li>
+  </ul>
+
+  <div class="page-footer">
+    <span>AIPUSHTECH · NOTE FONDATRICE</span>
+    <span class="pagenum">3 / 7</span>
+  </div>
+</section>
+
+<!-- ============================== PAGE 4 ============================== -->
+<section class="page">
+  <div class="page-header">
+    <span class="left">[ 04 · CE QUI NE CHANGE PAS ]</span>
+    <span class="right">PUSHREF · DOMAINE GIS-GÉOMATIQUE</span>
+  </div>
+
+  <h2>Ce qui ne change pas</h2>
+
+  <p class="lead">Une note fondatrice honnête doit aussi dire ce qui <strong>ne</strong> change <strong>pas</strong>. Parce que beaucoup de choses ne changent pas, et c'est important pour Camille de le savoir.</p>
+
+  <h3>La rigueur du référentiel reste intacte</h3>
+  <p>Si tu mélanges Lambert 93 et WGS84 dans un script de classification, ton modèle peut être parfait, le résultat sera décalé de plusieurs mètres. Aucune IA ne corrige ça. La connaissance des CRS, EPSG, transformations entre systèmes, reste une compétence non-négociable.</p>
+
+  <h3>La qualité de la donnée d'entraînement reste critique</h3>
+  <p>L'IA n'invente pas la qualité. Si ton dataset est biaisé, ton modèle hérite des biais. La capacité à <strong>construire un dataset de qualité</strong> est devenue plus importante que la capacité à entraîner un modèle.</p>
+
+  <h3>L'expertise métier reste irremplaçable</h3>
+  <p>Comprendre qu'un signal anormal sur une orthophoto n'est pas un changement de bâti mais une variation saisonnière de la végétation, c'est de l'expertise géographique. Aucun modèle fondationnel ne sait ça nativement.</p>
+
+  <h3>La validation manuelle reste obligatoire</h3>
+  <p>Pour la majorité des cas d'usage en collectivité (cadastre, PLU, ZAN), un résultat IA n'est jamais publié sans contrôle humain. Les hallucinations existent en télédétection comme en LLM.</p>
+
+  <h3>La communication avec le métier reste critique</h3>
+  <p>Expliquer à un élu pourquoi le modèle a détecté 1200 nouveaux bâtiments quand on en attendait 800, qu'est-ce qu'il faut en penser, comment recouper avec les permis de construire — c'est le métier du géomaticien, pas du modèle.</p>
+
+  <div class="pull">L'IA accélère, déplace, transforme. Mais elle ne remplace ni la rigueur référentielle, ni l'expertise géographique, ni la validation, ni la traduction métier.</div>
+
+  <p>Le bon géomaticien en 2026, c'est celui qui combine les nouveaux outils IA avec ces fondamentaux qui ne bougent pas.</p>
+
+  <div class="page-footer">
+    <span>AIPUSHTECH · NOTE FONDATRICE</span>
+    <span class="pagenum">4 / 7</span>
+  </div>
+</section>
+
+<!-- ============================== PAGE 5 ============================== -->
+<section class="page">
+  <div class="page-header">
+    <span class="left">[ 05 · COMMENT PUSHREF SE DÉPLOIE ]</span>
+    <span class="right">PUSHREF · DOMAINE GIS-GÉOMATIQUE</span>
+  </div>
+
+  <h2>Comment Pushref se déploie ici</h2>
+
+  <p>Le domaine <code>gis-geomatique</code> applique la mécanique générale du progiciel à ce métier précis : <strong>filtrage par sondes, enrichissement par LLM, ancrage par QCM, sandbox cross-LLM, partage entre pairs</strong>.</p>
+
+  <div class="workflow-wrap">
+    <svg viewBox="0 0 700 130" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#2A6F4F"/>
+        </marker>
+      </defs>
+      <!-- 5 étapes -->
+      <g font-family="Georgia, serif" font-size="11" fill="#14181A">
+        <rect x="10"  y="40" width="110" height="50" rx="3" fill="#FAFAF7" stroke="#2A6F4F" stroke-width="1.5"/>
+        <text x="65"  y="62" text-anchor="middle" font-weight="700">22 sources</text>
+        <text x="65"  y="78" text-anchor="middle" font-size="9" fill="#4A5258">FR + intl.</text>
+
+        <rect x="155" y="40" width="110" height="50" rx="3" fill="#FAFAF7" stroke="#2A6F4F" stroke-width="1.5"/>
+        <text x="210" y="62" text-anchor="middle" font-weight="700">35 sondes</text>
+        <text x="210" y="78" text-anchor="middle" font-size="9" fill="#4A5258">filtrage</text>
+
+        <rect x="300" y="40" width="110" height="50" rx="3" fill="#FAFAF7" stroke="#2A6F4F" stroke-width="1.5"/>
+        <text x="355" y="62" text-anchor="middle" font-weight="700">enrichissement</text>
+        <text x="355" y="78" text-anchor="middle" font-size="9" fill="#4A5258">LLM + glossaire</text>
+
+        <rect x="445" y="40" width="110" height="50" rx="3" fill="#FAFAF7" stroke="#2A6F4F" stroke-width="1.5"/>
+        <text x="500" y="62" text-anchor="middle" font-weight="700">QCM / SRS</text>
+        <text x="500" y="78" text-anchor="middle" font-size="9" fill="#4A5258">ancrage</text>
+
+        <rect x="590" y="40" width="100" height="50" rx="3" fill="#0F0F0F" stroke="#C67A2C" stroke-width="2"/>
+        <text x="640" y="62" text-anchor="middle" font-weight="700" fill="#FAFAF7">Camille</text>
+        <text x="640" y="78" text-anchor="middle" font-size="9" fill="#C67A2C">flux personnalisé</text>
+      </g>
+      <!-- flèches -->
+      <line x1="120" y1="65" x2="153" y2="65" stroke="#2A6F4F" stroke-width="1.5" marker-end="url(#arr)"/>
+      <line x1="265" y1="65" x2="298" y2="65" stroke="#2A6F4F" stroke-width="1.5" marker-end="url(#arr)"/>
+      <line x1="410" y1="65" x2="443" y2="65" stroke="#2A6F4F" stroke-width="1.5" marker-end="url(#arr)"/>
+      <line x1="555" y1="65" x2="588" y2="65" stroke="#2A6F4F" stroke-width="1.5" marker-end="url(#arr)"/>
+    </svg>
+    <div class="workflow-caption">Le parcours Pushref · 22 sources → 35 sondes → enrichissement → ancrage → flux Camille</div>
+  </div>
+
+  <h3>Les sondes — 35 sondes calibrées</h3>
+  <div class="probes">
+    <div class="probe">
+      <div class="probe-name">foundation-models-eo</div>
+      <div class="probe-why">Prithvi, TerraMind, Clay, SatMAE, AlphaEarth, Earth-3</div>
+    </div>
+    <div class="probe">
+      <div class="probe-name">teledetection</div>
+      <div class="probe-why">Sentinel-1/2, Landsat, HLS, Pléiades, multispectral</div>
+    </div>
+    <div class="probe">
+      <div class="probe-name">ign-geoplateforme</div>
+      <div class="probe-why">IGN, Géoplateforme, BD TOPO, Lidar HD, RGE Alti</div>
+    </div>
+    <div class="probe">
+      <div class="probe-name">qgis-ecosystem</div>
+      <div class="probe-why">QGIS, Lizmap, QField, plugins, releases</div>
+    </div>
+    <div class="probe">
+      <div class="probe-name">jumeaux-numeriques</div>
+      <div class="probe-why">Digital twin, BIM-SIG, smart city, CityGML</div>
+    </div>
+    <div class="probe">
+      <div class="probe-name">urbanisme-amenagement</div>
+      <div class="probe-why">PLU, ZAN, urbanisme prédictif, Banque des Territoires</div>
+    </div>
+  </div>
+
+  <h3>Les sources — 22 sources actives</h3>
+  <p>Mix FR/EN. Côté français : <strong>GeoRezo, SIGMAG, Banque des Territoires, datando, FormationQGIS, IGN Actualités, CNES, Cerema, AFIGÉO</strong>. Côté international : <strong>Geoawesomeness, IBM Research, NASA Earth Data, ESA Copernicus, Planet, ArXiv (filtré), Esri ArcGIS Blog, QGIS Blog, Hugging Face, weeklyOSM</strong>.</p>
+
+  <div class="page-footer">
+    <span>AIPUSHTECH · NOTE FONDATRICE</span>
+    <span class="pagenum">5 / 7</span>
+  </div>
+</section>
+
+<!-- ============================== PAGE 6 ============================== -->
+<section class="page">
+  <div class="page-header">
+    <span class="left">[ 06 · CE QU'ON FILTRE ]</span>
+    <span class="right">PUSHREF · DOMAINE GIS-GÉOMATIQUE</span>
+  </div>
+
+  <h2>Ce qu'on filtre, ce qu'on garde</h2>
+
+  <p>Pour rendre concret ce que Pushref filtre vraiment, voici une journée type d'ingestion.</p>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="num">~180</div>
+      <div class="lab">articles bruts<br>jour ouvré moyen</div>
+    </div>
+    <div class="stat">
+      <div class="num">~30</div>
+      <div class="lab">passent les sondes<br>inclusives</div>
+    </div>
+    <div class="stat">
+      <div class="num">5-8</div>
+      <div class="lab">affichés dans<br>le flux Camille</div>
+    </div>
+  </div>
+
+  <h3>5 articles types qu'on garde</h3>
+
+  <ul class="is">
+    <li><strong>Modèle fondationnel</strong> — <em>« IBM publie Prithvi-EO 2.1 avec 8 nouveaux datasets globaux »</em> (IBM Research). Mature, factuel, retour d'expérience benchmark inclus.</li>
+    <li><strong>Cas d'usage territorial français</strong> — <em>« La métropole de Rennes utilise QGIS + Prithvi pour la détection automatique des piscines non déclarées »</em> (SIGMAG). Concret, localisé, chiffré.</li>
+    <li><strong>Outil opensource</strong> — <em>« QGIS 3.46 sort avec intégration native ONNX et plugin TerraTorch »</em> (Blog QGIS). Mise à jour produit qui change la chaîne de production.</li>
+    <li><strong>Critique méthodologique</strong> — <em>« Pourquoi Prithvi sous-performe sur les zones tropicales »</em> (ArXiv filtré). Article récent, pose une limite à connaître.</li>
+    <li><strong>Régulation</strong> — <em>« AI Act et observation de la Terre : les obligations 2026 »</em> (Banque des Territoires). Sujet réglementaire majeur.</li>
+  </ul>
+
+  <h3>5 articles types qu'on filtre</h3>
+  <ul class="is-not">
+    <li><em>« 10 raisons pour lesquelles le SIG va révolutionner votre business en 2026 »</em> — listicle creux, sonde <code>pure-marketing</code> activée.</li>
+    <li><em>« Comment optimiser ses trajets en voiture avec Waze »</em> — GPS grand public, sonde <code>gps-grand-public</code>.</li>
+    <li><em>« GTA VI introduit la cartographie procédurale »</em> — strict-exclude <code>gaming-virtual-worlds</code>.</li>
+    <li><em>« ChatGPT 5.5 sort : tout ce qu'il faut savoir »</em> — IA généraliste sans angle géo.</li>
+    <li><em>« Notre métaverse cartographique sur blockchain »</em> — exclusion <code>blockchain-web3-spatial</code>.</li>
+  </ul>
+
+  <p>Ce filtrage n'est pas magique, il est imparfait, et il est <strong>itéré</strong>. Tous les 15 jours, l'équipe Pushref fait une revue manuelle d'un échantillon des articles entrants pour valider la précision des sondes et ajuster.</p>
+
+  <div class="page-footer">
+    <span>AIPUSHTECH · NOTE FONDATRICE</span>
+    <span class="pagenum">6 / 7</span>
+  </div>
+</section>
+
+<!-- ============================== PAGE 7 ============================== -->
+<section class="page">
+  <div class="page-header">
+    <span class="left">[ 07 · POURQUOI ÇA COMPTE ]</span>
+    <span class="right">PUSHREF · DOMAINE GIS-GÉOMATIQUE</span>
+  </div>
+
+  <h2>Pourquoi ce domaine compte</h2>
+
+  <p class="lead">Trois raisons pour lesquelles ce domaine compte particulièrement, et pourquoi Camille mérite mieux qu'une newsletter de plus.</p>
+
+  <h3>1. Le métier est en pleine mutation, et personne ne lui dit clairement</h3>
+  <p>Les éditeurs commerciaux parlent de leurs outils. Les chercheurs parlent de leurs papiers. Les institutions parlent de leurs programmes. Mais personne ne fait la synthèse pour le praticien — <em>« voici ce qui change concrètement dans ton métier, ce mois-ci »</em>. L'AIPushTech remplit ce vide.</p>
+
+  <h3>2. La France et l'Europe ont un écosystème géomatique de classe mondiale, sous-médiatisé</h3>
+  <p>L'IGN, le CNES, le Cerema, l'AFIGÉO, la Géoplateforme, les CRIGE régionaux — tout cet écosystème produit, publie, organise. Mais l'attention médiatique va prioritairement aux acteurs US. Pushref, marque éditoriale française, fait le choix éditorial inverse : <strong>donner aux sources françaises et européennes la visibilité qu'elles méritent</strong>, en les mettant en regard de l'écosystème mondial.</p>
+
+  <h3>3. La géomatique est l'un des métiers où l'IA a l'impact le plus tangible et le moins discuté</h3>
+  <p>Tout le monde parle de ChatGPT et du marketing. Personne ne parle vraiment de ce que Prithvi va changer dans les services SIG des collectivités françaises dans les 24 prochains mois. C'est précisément cette zone — les transformations métiers profondes, peu médiatisées — que Pushref est conçu pour couvrir.</p>
+
+  <div class="pull">Si tu es Camille, ou si tu connais une Camille — un·e professionnel·le de la géomatique qui essaie de garder une longueur d'avance sans avoir le temps — ce domaine est fait pour vous deux.</div>
+
+  <p>La promesse est simple : <strong>30 minutes par semaine pour rester pertinent, pas 5 heures.</strong></p>
+
+  <p>Bienvenue dans <code>gis-geomatique</code>.</p>
+
+  <div class="page-footer">
+    <span>AIPUSHTECH · NOTE FONDATRICE</span>
+    <span class="pagenum">7 / 7</span>
+  </div>
+</section>
+
+<!-- ============================== ENDING (cover sombre) ============================== -->
+<section class="ending">
+  <div class="tag">[ FIN · NOTE FONDATRICE ]</div>
+  <h2>GIS &amp; Géomatique</h2>
+
+  <div class="ending-quote">Cartographier ce qui change. Sans rater ce qui compte.</div>
+
+  <p>Pushref est édité par AIPushTech, marque éditoriale française basée en Île-de-France, spécialisée en ingénierie logicielle et IA.</p>
+
+  <p>Téléchargeable sur <strong>aipushtech.com/notes</strong> · Avril 2026</p>
+
+  <div class="ending-bottom">
+    <div><strong>PUSHREF</strong> &nbsp;·&nbsp; édité par AIPushTech</div>
+    <div>30 AVRIL 2026 &nbsp;·&nbsp; <strong>FR</strong></div>
+  </div>
+</section>
+
+</body>
+</html>
